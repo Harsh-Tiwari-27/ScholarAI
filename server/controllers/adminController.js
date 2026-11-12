@@ -1,4 +1,5 @@
 const Application = require("../models/Application");
+const Notification = require("../models/Notification");
 
 // Get all applications
 exports.getAllApplications = async (req, res) => {
@@ -55,6 +56,32 @@ exports.getApplicationById = async (req, res) => {
 
 
 // Approve application
+
+
+
+const createStatusNotification = async (application, status) => {
+    const scholarship = await require("../models/Scholarship").findById(
+        application.scholarship
+    );
+
+    const scholarshipName = scholarship?.name || "your scholarship";
+
+    const isApproved = status === "approved";
+
+    await Notification.create({
+        student: application.student,
+        title: isApproved
+            ? "Application Approved"
+            : "Application Rejected",
+        message: isApproved
+            ? `Congratulations! Your application for "${scholarshipName}" has been approved.`
+            : `Your application for "${scholarshipName}" has been rejected.`,
+        type: status,
+        application: application._id
+    });
+};
+
+// Approve application
 exports.approveApplication = async (req, res) => {
     try {
         const application = await Application.findById(req.params.id);
@@ -72,24 +99,24 @@ exports.approveApplication = async (req, res) => {
         }
 
         application.status = "approved";
-
         await application.save();
 
-        res.status(200).json({
-            message: "Application approved successfully",
+        await createStatusNotification(application, "approved");
+
+        return res.status(200).json({
+            message: "Application approved and notification created successfully",
             application
         });
 
     } catch (error) {
         console.error("Approve Application Error:", error);
 
-        res.status(500).json({
+        return res.status(500).json({
             message: "Server error",
             error: error.message
         });
     }
 };
-
 
 // Reject application
 exports.rejectApplication = async (req, res) => {
@@ -109,18 +136,19 @@ exports.rejectApplication = async (req, res) => {
         }
 
         application.status = "rejected";
-
         await application.save();
 
-        res.status(200).json({
-            message: "Application rejected successfully",
+        await createStatusNotification(application, "rejected");
+
+        return res.status(200).json({
+            message: "Application rejected and notification created successfully",
             application
         });
 
     } catch (error) {
         console.error("Reject Application Error:", error);
 
-        res.status(500).json({
+        return res.status(500).json({
             message: "Server error",
             error: error.message
         });

@@ -21,11 +21,55 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
-    role: {
-      type: String,
-      enum: ["student", "admin"],
-      default: "student",
-    },
+    
+role: {
+    type: String,
+    enum: ["student", "admin"],
+    default: "student",
+},
+
+// Academic Details
+college: {
+    type: String,
+    trim: true,
+    default: "",
+    maxlength: 150,
+},
+
+course: {
+    type: String,
+    trim: true,
+    default: "",
+    maxlength: 100,
+},
+
+branch: {
+    type: String,
+    trim: true,
+    default: "",
+    maxlength: 100,
+},
+
+yearOfStudy: {
+    type: Number,
+    min: 1,
+    max: 6,
+    default: null,
+},
+
+cgpa: {
+    type: Number,
+    min: 0,
+    max: 10,
+    default: null,
+},
+
+familyIncome: {
+    type: Number,
+    min: 0,
+    default: null,
+},
+
   },
   { timestamps: true }
 );

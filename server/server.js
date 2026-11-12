@@ -12,6 +12,9 @@ const authRoutes = require("./routes/authRoutes");
 const scholarshipRoutes = require("./routes/scholarshipRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 
@@ -39,14 +42,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/scholarships", scholarshipRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/profile", profileRoutes);
 
+
+app.use("/api/ai", aiRoutes);
 // 404 Route
-app.use((req, res) => {
-    res.status(404).json({
-        message: "API Route Not Found",
-        path: req.originalUrl
-    });
-});
+
 
 // Global Error Handler
 app.use((err, req, res, next) => {

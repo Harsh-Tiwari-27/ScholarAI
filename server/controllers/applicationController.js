@@ -1,6 +1,7 @@
 
 const Application = require("../models/Application");
 const Scholarship = require("../models/Scholarship");
+const Notification = require("../models/Notification");
 
 // Apply for a scholarship
 const applyScholarship = async (req, res) => {
@@ -132,10 +133,15 @@ const getApplicationById = async (req, res) => {
 
 
 // Update application status (Admin)
+
 const updateApplicationStatus = async (req, res) => {
     try {
         const { status } = req.body;
         const { id } = req.params;
+
+        console.log("STATUS UPDATE FUNCTION CALLED");
+        console.log("Application ID:", id);
+        console.log("Requested status:", status);
 
         if (!["approved", "rejected", "pending"].includes(status)) {
             return res.status(400).json({
@@ -151,8 +157,42 @@ const updateApplicationStatus = async (req, res) => {
             });
         }
 
+        const previousStatus = application.status;
+
         application.status = status;
         await application.save();
+
+        // Create a notification only when the status changes
+        // to approved or rejected.
+        if (
+            previousStatus !== status &&
+            ["approved", "rejected"].includes(status)
+        ) {
+            const scholarship = await Scholarship.findById(
+                application.scholarship
+            );
+
+            const title =
+                status === "approved"
+                    ? "Application Approved 🎉"
+                    : "Application Rejected";
+
+            const message = scholarship
+                ? status === "approved"
+                    ? `Congratulations! Your application for "${scholarship.title}" has been approved.`
+                    : `Your application for "${scholarship.title}" has been rejected.`
+                : status === "approved"
+                    ? "Congratulations! Your scholarship application has been approved."
+                    : "Your scholarship application has been rejected.";
+
+            await Notification.create({
+                student: application.student,
+                title,
+                message,
+                type: status,
+                application: application._id
+            });
+        }
 
         return res.status(200).json({
             message: "Application status updated successfully",
@@ -168,6 +208,7 @@ const updateApplicationStatus = async (req, res) => {
         });
     }
 };
+
 
 
 module.exports = {

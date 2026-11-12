@@ -11,6 +11,7 @@ exports.createScholarship = async (req, res) => {
             provider,
             amount,
             eligibility,
+            eligibilityCriteria,
             deadline,
             status
         } = req.body;
@@ -36,6 +37,13 @@ exports.createScholarship = async (req, res) => {
             provider,
             amount,
             eligibility,
+            eligibilityCriteria:{
+                minCGPA: eligibilityCriteria?.minCGPA ?? null,
+                maxFamilyIncome: eligibilityCriteria?.maxFamilyIncome ?? null,
+                eligibleCourses: eligibilityCriteria?.eligibleCourses || [],
+                eligibleBranches: eligibilityCriteria?.eligibleBranches || [],
+                eligibleYears: eligibilityCriteria?.eligibleYears || []
+            },
             deadline,
             status: status || "active"
         });

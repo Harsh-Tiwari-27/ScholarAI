@@ -4,6 +4,7 @@ import StudentRegister from "./pages/StudentRegister";
 import StudentDashboard from "./pages/StudentDashboard";
 import ScholarshipDetails from "./pages/ScholarshipDetails";
 import AdminDashboard from "./pages/AdminDashboard";
+import StudentApplicationDetails from "./pages/StudentApplicationDetails";
 import "./App.css";
 
 function Home() {
@@ -76,6 +77,11 @@ function App() {
         <Route
           path="/admin-dashboard"
           element={<AdminDashboard />}
+        />
+
+        <Route
+          path="/student/application/:id"
+          element={<StudentApplicationDetails />}
         />
 
       </Routes>

@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const scholarshipSchema = new mongoose.Schema(
@@ -23,9 +24,41 @@ const scholarshipSchema = new mongoose.Schema(
       required: true
     },
 
+    // Existing display-friendly eligibility description
     eligibility: {
       type: String,
       required: true
+    },
+
+    // New structured eligibility criteria
+    eligibilityCriteria: {
+      minCGPA: {
+        type: Number,
+        min: 0,
+        max: 10,
+        default: null
+      },
+
+      maxFamilyIncome: {
+        type: Number,
+        min: 0,
+        default: null
+      },
+
+      eligibleCourses: {
+        type: [String],
+        default: []
+      },
+
+      eligibleBranches: {
+        type: [String],
+        default: []
+      },
+
+      eligibleYears: {
+        type: [Number],
+        default: []
+      }
     },
 
     deadline: {
